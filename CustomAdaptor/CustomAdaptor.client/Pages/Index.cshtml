@@ -1,0 +1,57 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Gantt Sample";
+}
+<script>
+    // Define the CustomAdaptor class by extending ODataV4Adaptor.
+    class CustomAdaptor extends ej.data.ODataV4Adaptor {
+        processResponse() {
+            const original = super.processResponse.apply(this, arguments);
+            return original;
+        }
+        processQuery(dm, query) {
+            dm.dataSource.url = 'https://localhost:7284/odata/GanttTasks'; // Here xxxx represents the port number.
+            query.addParams('Syncfusion in ASP.NET Core Gantt Chart', 'true');
+            const result = super.processQuery.apply(this, arguments);
+            return result;
+        }
+        beforeSend(dm, request, settings) {
+            request.headers.set('Authorization', `Bearer ${window.token}`);
+            super.beforeSend(dm, request, settings);
+        }
+    }
+    // Create the DataManager instance with CustomAdaptor.
+    var dataManager = new ej.data.DataManager({
+        url: 'https://localhost:7284/odata/GanttTasks', // Here xxxx represents the port number.
+        adaptor: new CustomAdaptor(),
+        key: 'TaskID',
+        crossDomain: true
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+    var gantt = document.getElementById('Gantt').ej2_instances[0];
+    if(gantt)
+        gantt.dataSource = dataManager;
+
+    });
+</script>
+
+<ejs-gantt id="Gantt"
+           height="400px">
+    <e-gantt-taskfields id="TaskID" name="TaskName" startDate="StartDate" endDate="EndDate"
+                        duration="Duration" progress="Progress" dependency="Dependency"
+                        parentID="ParentID" segments="Segments" resourceInfo="ResourceInfos">
+    </e-gantt-taskfields>
+    <e-gantt-resourcefields id="resourceId" name="resourceName" unit="resourceUnit" group="resourceGroup">
+    </e-gantt-resourcefields>
+    <e-gantt-editsettings allowEditing="true" allowAdding="true" allowDeleting="true"
+                          allowTaskbarEditing="true"></e-gantt-editsettings>
+    <e-gantt-columns>
+        <e-gantt-column field="TaskID" headerText="Task ID" textAlign="Right" width="90" type="number" isPrimaryKey="true"></e-gantt-column>
+        <e-gantt-column field="TaskName" headerText="Task Name" textAlign="Left" width="270" type="string"></e-gantt-column>
+        <e-gantt-column field="StartDate" headerText="Start Date" textAlign="Right" width="150" format="yMd" type="dateTime"></e-gantt-column>
+        <e-gantt-column field="EndDate" headerText="End Date" textAlign="Right" width="150" format="dd/MM/yyyy hh:mm" type="dateTime"></e-gantt-column>
+        <e-gantt-column field="Duration" headerText="Duration" textAlign="Right" width="90" type="number"></e-gantt-column>
+        <e-gantt-column field="Progress" headerText="Progress" textAlign="Right" width="120" type="number"></e-gantt-column>
+    </e-gantt-columns>
+</ejs-gantt>

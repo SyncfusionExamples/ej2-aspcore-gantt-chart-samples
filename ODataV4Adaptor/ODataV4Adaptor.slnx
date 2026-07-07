@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ODataV4Adaptor-client/ODataV4Adaptor-client.csproj" />
+  <Project Path="ODataV4Adaptor.Server/ODataV4Adaptor.Server.csproj" />
+</Solution>

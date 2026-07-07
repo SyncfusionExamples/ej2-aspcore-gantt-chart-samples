@@ -1,0 +1,133 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Gantt sample";
+}
+<ejs-gantt id="Gantt" height="400px">
+
+    <e-gantt-taskfields id="TaskID" name="TaskName" startDate="StartDate" endDate="EndDate" duration="Duration"
+                        progress="Progress" dependency="Predecessor" parentID="ParentId" resourceInfo="ResourceInfos">
+    </e-gantt-taskfields>
+
+    <e-gantt-editsettings allowAdding="true" allowEditing="true" allowDeleting="true" allowTaskbarEditing="true">
+    </e-gantt-editsettings>
+
+    <e-gantt-columns>
+        <e-gantt-column field="TaskID" width="80"></e-gantt-column>
+        <e-gantt-column field="TaskName" headerText="Job Name" width="250"></e-gantt-column>
+        <e-gantt-column field="StartDate" type="dateTime"></e-gantt-column>
+        <e-gantt-column field="EndDate" type="dateTime"></e-gantt-column>
+        <e-gantt-column field="Duration" editType="numericedit" type="number"></e-gantt-column>
+        <e-gantt-column field="Progress" type="number"></e-gantt-column>
+        <e-gantt-column field="Predecessor"></e-gantt-column>
+    </e-gantt-columns>
+
+</ejs-gantt>
+@section Scripts
+{
+    <script>
+        class GraphQLCrudAdaptor extends ej.data.GraphQLAdaptor {
+            processResponse(resData, ds, query, xhr, request) {
+                if (resData && resData.data) {
+                    const data = resData.data;
+                    if (data.getTasks) {
+                        return data.getTasks;
+                    }
+                    if (data.updateTask) {
+                        return { result: data.updateTask };
+                    }
+                    if (data.addTask) {
+                        return { result: data.addTask };
+                    }
+                    if (data.deleteTask !== undefined) {
+                        return { result: data.deleteTask };
+                    }
+                }
+                return super.processResponse(
+                    resData,
+                    ds,
+                    query,
+                    xhr,
+                    request
+                );
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataManager = new ej.data.DataManager({
+                url: 'http://localhost:4205/',
+                adaptor: new GraphQLCrudAdaptor({
+                    response: {
+                        result: 'getTasks.result',
+                        count: 'getTasks.count'
+                    },
+                    query: `
+                        query getTasks {
+                            getTasks {
+                                count
+                                result {
+                                    TaskID
+                                    TaskName
+                                    StartDate
+                                    EndDate
+                                    Duration
+                                    Progress
+                                    ParentId
+                                    Predecessor
+                                }
+                            }
+                        }
+                    `,
+                    mutation: {
+                        update: 'updateTask',
+                        insert: 'addTask',
+                        remove: 'deleteTask'
+                    },
+                    getMutation: function (action) {
+                        if (action === 'insert') {
+                            return `
+                            mutation AddTask($value:GanttTaskInput!) {
+                                addTask(value:$value){
+                                    TaskID
+                                    TaskName
+                                    StartDate
+                                    EndDate
+                                    Duration
+                                    Progress
+                                    ParentId
+                                    Predecessor
+                                }
+                            }`;
+                        }
+                        if (action === 'update') {
+                            return `
+                            mutation UpdateTask($value:GanttTaskInput!) {
+                                updateTask(value:$value){
+                                    TaskID
+                                    TaskName
+                                    StartDate
+                                    EndDate
+                                    Duration
+                                    Progress
+                                    ParentId
+                                    Predecessor
+                                }
+                            }`;
+                        }
+                        if (action === 'remove') {
+                            return `
+                            mutation DeleteTask($key:ID!) {
+                                deleteTask(key:$key)
+                            }`;
+                        }
+                        return '';
+                    }
+                }),
+                crossDomain: true
+            });
+
+            var gantt = document.querySelector('#Gantt').ej2_instances[0];
+            if (gantt)
+                gantt.dataSource = dataManager;
+        });
+    </script>
+}
