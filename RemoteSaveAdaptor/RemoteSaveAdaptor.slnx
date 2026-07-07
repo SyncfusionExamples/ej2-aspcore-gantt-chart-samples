@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="RemoteSaveAdaptor-client/RemoteSaveAdaptor-client.csproj" />
+  <Project Path="RemoteSaveAdaptor.Server/RemoteSaveAdaptor.Server.csproj" />
+</Solution>

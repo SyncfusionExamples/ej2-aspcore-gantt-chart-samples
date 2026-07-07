@@ -1,0 +1,57 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<ejs-gantt id="Gantt" height="450px">
+     <e-gantt-taskfields id="taskId" name="taskName" startDate="startDate" endDate="endDate" duration="duration"
+                         progress="progress" parentID="parentId">
+     </e-gantt-taskfields>
+     <e-gantt-editsettings allowAdding="true" allowEditing="true" allowDeleting="true" allowTaskbarEditing="true">
+     </e-gantt-editsettings>
+     <e-gantt-columns>
+         <e-gantt-column field="taskId" headerText="Task ID" isPrimaryKey="true" width="90">
+         </e-gantt-column>
+         <e-gantt-column field="taskName" headerText="Task Name" width="250">
+         </e-gantt-column>
+         <e-gantt-column field="startDate" headerText="Start Date" format="yMd">
+         </e-gantt-column>
+         <e-gantt-column field="endDate" headerText="End Date" format="dd/MM/yyyy hh:mm">
+         </e-gantt-column>
+         <e-gantt-column field="duration" headerText="Duration" editType="numericedit" type="number">
+         </e-gantt-column>
+         <e-gantt-column field="progress" headerText="Progress">
+         </e-gantt-column>
+     </e-gantt-columns>
+</ejs-gantt>
+@section Scripts
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            loadGantt();
+        });
+        function loadGantt() {
+            fetch('https://localhost:7007/api/gantt')
+                .then(response => response.json())
+                .then(result => {
+                    let data = new ej.data.DataManager({
+                        json: result,
+                        adaptor: new ej.data.RemoteSaveAdaptor(),
+                        batchUrl: 'https://localhost:7007/api/gantt/Batch',
+                    });
+                    createGantt(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+        function createGantt(data) {
+            var gantt = document.querySelector('#Gantt')?.ej2_instances?.[0];
+            if (!gantt) {
+                console.error("Gantt instance not found");
+                return;
+            }
+            gantt.dataSource = data;
+        }
+    </script>
+}

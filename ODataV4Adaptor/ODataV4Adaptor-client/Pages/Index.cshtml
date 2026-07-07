@@ -1,0 +1,144 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+@using Syncfusion.EJ2
+@using Syncfusion.EJ2.Gantt
+
+@{
+    var dataManager = new DataManager()
+    {
+        Url = "https://localhost:7199/odata/GanttTasks",
+        Adaptor = "ODataV4Adaptor",
+        CrossDomain = true,
+        Key = "TaskID"
+    };
+
+    var taskFields = new GanttTaskFields()
+    {
+        Id = "TaskID",
+        Name = "TaskName",
+        StartDate = "StartDate",
+        EndDate = "EndDate",
+        Duration = "Duration",
+        Progress = "Progress",
+        Dependency = "Dependency",
+        ParentID = "ParentID",
+        Segments = "Segments",
+        ResourceInfo = "ResourceInfos"
+    };
+
+    var resourceFields = new GanttResourceFields()
+    {
+        Id = "resourceId",
+        Name = "resourceName",
+        Unit = "resourceUnit",
+        Group = "resourceGroup"
+    };
+
+    var resources = new List<object>()
+    {
+        new { resourceId = 1, resourceName = "Martin Tamer" },
+        new { resourceId = 2, resourceName = "Rose Fuller" },
+        new { resourceId = 3, resourceName = "Margaret Buchanan" },
+        new { resourceId = 4, resourceName = "Fuller King" },
+        new { resourceId = 5, resourceName = "Davolio Fuller" },
+        new { resourceId = 6, resourceName = "Van Jack" },
+        new { resourceId = 7, resourceName = "Fuller Buchanan" },
+        new { resourceId = 8, resourceName = "Jack Davolio" },
+        new { resourceId = 9, resourceName = "Tamer Vinet" },
+        new { resourceId = 10, resourceName = "Vinet Fuller" },
+        new { resourceId = 11, resourceName = "Bergs Anton" },
+        new { resourceId = 12, resourceName = "Construction Supervisor" }
+    };
+
+    var editSettings = new GanttEditSettings()
+    {
+        AllowAdding = true,
+        AllowEditing = true,
+        AllowDeleting = true,
+        AllowTaskbarEditing = true
+    };
+
+    var toolbar = new List<string>()
+    {
+        "Add",
+        "Edit",
+        "Update",
+        "Delete",
+        "Cancel",
+        "ExpandAll",
+        "CollapseAll",
+        "Indent",
+        "Outdent"
+    };
+}
+
+<div style="margin:20px">
+    <h2>ODataV4Adaptor with Gantt</h2>
+
+    <ejs-gantt id="Gantt"
+               dataSource="@dataManager"
+               taskFields="@taskFields"
+               resourceFields="@resourceFields"
+               resources="@resources"
+               editSettings="@editSettings"
+               toolbar="@toolbar"
+               enableContextMenu="true"
+               height="400px">
+
+        <e-gantt-columns>
+
+            <e-gantt-column field="TaskID"
+                            headerText="Task ID"
+                            textAlign="Right"
+                            width="90"
+                            type="number"
+                            isPrimaryKey="true">
+            </e-gantt-column>
+
+            <e-gantt-column field="TaskName"
+                            headerText="Task Name"
+                            textAlign="Left"
+                            width="270"
+                            type="string">
+            </e-gantt-column>
+
+            <e-gantt-column field="StartDate"
+                            headerText="Start Date"
+                            textAlign="Right"
+                            width="150"
+                            format="yMd"
+                            type="dateTime">
+            </e-gantt-column>
+
+            <e-gantt-column field="EndDate"
+                            headerText="End Date"
+                            textAlign="Right"
+                            width="150"
+                            format="dd/MM/yyyy hh:mm"
+                            type="dateTime">
+            </e-gantt-column>
+
+            <e-gantt-column field="Duration"
+                            headerText="Duration"
+                            textAlign="Right"
+                            width="90"
+                            editType="numericedit"
+                            type="number">
+            </e-gantt-column>
+
+            <e-gantt-column field="Progress"
+                            headerText="Progress"
+                            textAlign="Right"
+                            width="120"
+                            type="number">
+            </e-gantt-column>
+
+        </e-gantt-columns>
+
+    </ejs-gantt>
+</div>

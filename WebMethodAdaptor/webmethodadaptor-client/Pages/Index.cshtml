@@ -1,0 +1,83 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@using Syncfusion.EJ2
+@using Syncfusion.EJ2.Gantt
+
+@{
+    var dataManager = new DataManager()
+    {
+        Url = "https://localhost:7052/api/Gantt",
+        Adaptor = "WebMethodAdaptor",
+        CrossDomain = true
+    };
+
+    var taskFields = new GanttTaskFields()
+    {
+        Id = "TaskID",
+        Name = "TaskName",
+        StartDate = "StartDate",
+        EndDate = "EndDate",
+        Duration = "Duration",
+        Progress = "Progress",
+        Dependency = "Dependency",
+        ParentID = "ParentID"
+    };
+
+    var editSettings = new GanttEditSettings()
+    {
+        AllowAdding = true,
+        AllowEditing = true,
+        AllowDeleting = true,
+        AllowTaskbarEditing = true
+    };
+
+    var toolbar = new List<string>()
+    {
+        "Add",
+        "Edit",
+        "Update",
+        "Delete",
+        "Cancel"
+    };
+}
+<div style="margin-top: 100px;">
+<ejs-gantt id="Gantt"
+           height="450px"
+           dataSource="@dataManager"
+           taskFields="@taskFields"
+           editSettings="@editSettings"
+           toolbar="@toolbar">
+
+    <e-gantt-columns>
+
+        <e-gantt-column field="TaskID"
+                        isPrimaryKey="true"
+                        width="100">
+        </e-gantt-column>
+
+        <e-gantt-column field="TaskName"
+                        width="250">
+        </e-gantt-column>
+
+        <e-gantt-column field="StartDate"
+                        format="dd/MM/yyyy">
+        </e-gantt-column>
+
+        <e-gantt-column field="EndDate"
+                        format="dd/MM/yyyy">
+        </e-gantt-column>
+
+        <e-gantt-column field="Duration">
+        </e-gantt-column>
+
+        <e-gantt-column field="Progress">
+        </e-gantt-column>
+
+    </e-gantt-columns>
+
+</ejs-gantt>
+</div>
